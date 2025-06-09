@@ -1,10 +1,32 @@
 import { Router } from "express"
+import { User } from "../models/userModels.js";
 
 const router = Router()
 
-router.get("/", (req, res) => {
-    res.send("AUTH Route")
+router.post("/callback", async(req, res) => {
+    try {
+        const {id, firstName, lastName, imageUrl} = req.body;
+
+
+        // check if user already exists
+        const user = await User.findOne({clerkId: id})
+
+        if(!user){
+            // signup
+            await User.create({
+                clerkId: id,
+                fullName: `${firstName} ${lastName}`,
+                imageUrl
+            })
+        }
+        res.status(200).json({success: true})
+ 
+    } catch(error) {
+
+    }
 })
+
+
 
 
 export default router
